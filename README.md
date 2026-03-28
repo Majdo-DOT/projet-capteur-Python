@@ -9,7 +9,7 @@ Ce projet permet de lire des données provenant d’un capteur, de les stocker, 
 Python
 ▶️ Utilisation
 Installer les dépendances :
-pip install matplotlib numpy pandas pyqtgraph PyQt6
+pip install matplotlib numpy pandas pyqtgraph PyQt5
 Lancer le programme :
 python main.py
 📁 Structure
