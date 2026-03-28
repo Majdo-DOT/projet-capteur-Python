@@ -1,5 +1,5 @@
 # projet-capteur-Python
-Interface graphique en Python  pour l’acquisition de capteurs
+Interface graphique en Python  pour l’acquisition de capteurs\n
 📊 Projet Capteur - Visualisation de Données
 🎯 Objectif
 
