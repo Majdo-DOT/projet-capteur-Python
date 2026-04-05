@@ -10,42 +10,67 @@ from data_logger import save_data
 from realtime_plot import LivePlot
 from datetime import datetime
 from PyQt5 import QtWidgets, QtCore
-
+import time
 
 plot = LivePlot()
 
-for line in read_serial(mode="real"):
-    print("RAW:", line)  # debug
-    
-    parts = line.split('\t')
 
-    if len(parts) != 9:
+for line in read_serial(mode='sim'):
+    parts = line.split(' ')
+    print(parts)
+    print(len(parts))
+    
+    if len(parts) != 3:
         print("Format incorrect :", line)
         continue
-    
     try:
-        jour, mois, annee, heure, minute, seconde = map(int, parts[:6])
-        temp, hum, lum = map(float, parts[6:])
-    
-        timestamp = datetime(2000 + annee, mois, jour, heure, minute, seconde)
-    
+        timestamps = time.time()
+        temp, hum, lum = time.time(),2,3#map(float, parts[6:])
     except ValueError:
         print("Erreur conversion :", line)
         continue
-    
-    print(timestamp, temp, hum, lum)
-    
+    print(timestamps, temp, hum, lum)
+   # try:
+   #     save_data('ello', timestamp, temp, hum, lum)
+    #except Exception as e:
+     #  print("Erreur sauvegarde :", e)
     try:
-        save_data('ello', timestamp, temp, hum, lum)
+        plot.update(timestamps, temp, hum, lum)
+        QtWidgets.QApplication.processEvents()  # IMPORTANT
+    except Exception as e:
+        print("Erreur graphique :", e)        
+# for line in read_serial(mode="real"):
+#     print("RAW:", line)  # debug
+    
+#     parts = line.split('\t')
+
+#     if len(parts) != 9:
+#         print("Format incorrect :", line)
+#         continue
+    
+#     try:
+#         jour, mois, annee, heure, minute, seconde = map(int, parts[:6])
+#         temp, hum, lum = map(float, parts[6:])
+    
+#         timestamp = datetime(2000 + annee, mois, jour, heure, minute, seconde)
+    
+#     except ValueError:
+#         print("Erreur conversion :", line)
+#         continue
+    
+#     print(timestamp, temp, hum, lum)
+    
+#     try:
+#         save_data('ello', timestamp, temp, hum, lum)
         
-    except Exception as e:
-        print("Erreur sauvegarde :", e)
+#     except Exception as e:
+#         print("Erreur sauvegarde :", e)
     
-    try:
-        plot.update(timestamp, temp, hum, lum)
-        QtWidgets.QApplication.processEvents()  # 👈 IMPORTANT
-    except Exception as e:
-        print("Erreur graphique :", e)
+#     try:
+#         plot.update(timestamp, temp, hum, lum)
+#         QtWidgets.QApplication.processEvents()  # IMPORTANT
+#     except Exception as e:
+#         print("Erreur graphique :", e)
 
 #
 plot.run()
