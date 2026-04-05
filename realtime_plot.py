@@ -22,9 +22,18 @@ class LivePlot:
         self.selector = QtWidgets.QComboBox()
         self.selector.addItems(["Température", "Humidité", "Luminosité"])
         self.layout.addWidget(self.selector)
-
+        self.selector.currentTextChanged.connect(self.choice_data)
+        choice = self.selector.currentText()
+        
+        #Sélecteur de mode
+        self.modes = QtWidgets.QComboBox()
+        self.modes.addItems(["Simulation","Réél"])
+        self.layout.addWidget(self.modes)
+        self.modes.currentTextChanged.connect(self.choice_mode)
+        mode = self.modes.currentText()
+        
         # Graphe
-        self.plot = pg.PlotWidget(title="Données capteurs")
+        self.plot = pg.PlotWidget(title="Données capteurs",axisItems = {'bottom': pg.DateAxisItem()})
         self.layout.addWidget(self.plot)
 
         # Label stats
@@ -41,70 +50,86 @@ class LivePlot:
         self.curve = self.plot.plot(pen='y')
 
         # Textes (créés UNE seule fois)
-        self.min_text = pg.TextItem(anchor=(0, 1))
-        self.max_text = pg.TextItem(anchor=(0, 1))
-        self.mean_text = pg.TextItem(anchor=(0, 1))
+        #self.min_text = pg.TextItem(anchor=(0, 1))
+        #self.max_text = pg.TextItem(anchor=(0, 1))
+        #self.mean_text = pg.TextItem(anchor=(0, 1))
 
-        self.plot.addItem(self.min_text)
-        self.plot.addItem(self.max_text)
-        self.plot.addItem(self.mean_text)
+        #self.plot.addItem(self.min_text)
+        #self.plot.addItem(self.max_text)
+        #self.plot.addItem(self.mean_text)
 
         # Labels axes
-        self.plot.setLabel('left', 'Valeur')
-        self.plot.setLabel('bottom', 'Mesures')
-
+        #self.abscissa = self.plot.setLabel('bottom', 'Temps')
+        #self.ordinate =  self.plot.setLabel('left', 'Valeur')
+        
         self.window.show()
-
-    def update(self, timestamp, temp, hum, lum):
+        
+    def choice_data(self):
+        choice = self.selector.currentText()
+        return choice
+    
+    def choice_mode(self):
+        mode = self.modes.currentText()
+        return mode
+    
+    def update(self, timestamps, temp, hum, lum):
         # Stockage
-        self.timestamps.append(timestamp)
+        
+        self.timestamps.append(timestamps)
         self.temp.append(temp)
         self.hum.append(hum)
         self.lum.append(lum)
 
-        # Choix utilisateur
         choice = self.selector.currentText()
+        
 
         if choice == "Température":
             data = self.temp
             name = "Température (°C)"
+            #self.plot.removeItem(axisItems)
+            #self.ordinate =  self.plot.setLabel('left', name)
         elif choice == "Humidité":
             data = self.hum
             name = "Humidité (%)"
+            #self.plot.removeItem(axisItems)
+            #self.ordinate =  self.plot.setLabel('left', name)
         else:
             data = self.lum
             name = "Luminosité (%)"
-
+            #self.plot.removeItem(axisItems)
+            #self.ordinate =  self.plot.setLabel('left', name)
         # Axe X
-        x = list(range(len(data)))
+        #x = list(range(len(data)))
 
         # Update courbe
-        self.curve.setData(x, data)
+        print(timestamps)
+        print(data)
+        self.curve.setData(data, data)
         self.plot.setTitle(name)
 
         # Stats
-        if len(data) > 0:
-            arr = np.array(data)
-            min_val = arr.min()
-            max_val = arr.max()
-            mean_val = arr.mean()
+        # if len(data) > 0:
+        #     arr = np.array(data)
+        #     min_val = arr.min()
+        #     max_val = arr.max()
+        #     mean_val = arr.mean()
 
-            # Label texte
-            self.stats_label.setText(
-                f"{name} | Min: {min_val:.2f} | Max: {max_val:.2f} | Moy: {mean_val:.2f}"
-            )
+        #     # Label texte
+        #     self.stats_label.setText(
+        #         f"{name} | Min: {min_val:.2f} | Max: {max_val:.2f} | Moy: {mean_val:.2f}"
+        #     )
 
-            # Position des textes (à droite du graphe)
-            xpos = len(data)
+        #     # Position des textes (à droite du graphe)
+        #     xpos = len(data)
 
-            self.min_text.setText(f"Min: {min_val:.1f}")
-            self.min_text.setPos(xpos, min_val)
+        #     self.min_text.setText(f"Min: {min_val:.1f}")
+        #     self.min_text.setPos(xpos, min_val)
 
-            self.max_text.setText(f"Max: {max_val:.1f}")
-            self.max_text.setPos(xpos, max_val)
+        #     self.max_text.setText(f"Max: {max_val:.1f}")
+        #     self.max_text.setPos(xpos, max_val)
 
-            self.mean_text.setText(f"Moy: {mean_val:.1f}")
-            self.mean_text.setPos(xpos, mean_val)
+        #     self.mean_text.setText(f"Moy: {mean_val:.1f}")
+        #     self.mean_text.setPos(xpos, mean_val)
 
     def run(self):
         pg.exec()
