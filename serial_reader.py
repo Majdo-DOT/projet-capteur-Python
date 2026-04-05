@@ -8,7 +8,7 @@ import serial
 
 import time
 import random
-import math
+import numpy as np
 
 def read_serial(mode="sim", port='COM3', baudrate=9600):
     
@@ -35,16 +35,16 @@ def read_serial(mode="sim", port='COM3', baudrate=9600):
         print("Mode simulation activé")
         t = 0
         while True:
-            temp = 25 + 3 * math.sin(t/10) + random.uniform(-0.5, 0.5)
-            hum = 60 + 10 * math.sin(t/15) + random.uniform(-1, 1)
-            lum = 500 + 200 * math.sin(t/5) + random.uniform(-20, 20)
+            temp = 25 + 3 * np.sin(t/10) + random.uniform(-1, 1)
+            hum = 60 + 10 * np.sin(t/15) + random.uniform(-1, 1)
+            lum = 50 + 20 * np.sin(t/5) + random.uniform(-1, 1)
 
-            line = f"{round(temp,2)},{round(hum,2)},{round(lum,2)}"
-
+            line = f"{round(temp,1)} {round(hum)} {round(lum)}"
+            
             yield line
-
+            
             t += 1
-            time.sleep(1) # simule 1 mesure par seconde
+            time.sleep(1) # 1 mesure par seconde
 
         # except serial.SerialException as e:
         #      print(f"Erreur d'accès au port série : {e}")
