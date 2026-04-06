@@ -22,15 +22,15 @@ class LivePlot:
         self.selector = QtWidgets.QComboBox()
         self.selector.addItems(["Température", "Humidité", "Luminosité"])
         self.layout.addWidget(self.selector)
-        self.selector.currentTextChanged.connect(self.choice_data)
-        choice = self.selector.currentText()
+        #self.selector.currentTextChanged.connect(self.choice_data)
+        #self.choice = self.selector.currentText()
         
         #Sélecteur de mode
         self.modes = QtWidgets.QComboBox()
         self.modes.addItems(["Simulation","Réél"])
         self.layout.addWidget(self.modes)
-        self.modes.currentTextChanged.connect(self.choice_mode)
-        mode = self.modes.currentText()
+        #self.modes.currentTextChanged.connect(self.choice_mode)
+        #self.mode = self.modes.currentText()
         
         # Graphe
         self.plot = pg.PlotWidget(title="Données capteurs",axisItems = {'bottom': pg.DateAxisItem()})
@@ -59,9 +59,9 @@ class LivePlot:
         #self.plot.addItem(self.mean_text)
 
         # Labels axes
-        #self.abscissa = self.plot.setLabel('bottom', 'Temps')
-        #self.ordinate =  self.plot.setLabel('left', 'Valeur')
-        
+        self.abscissa = self.plot.setLabel('bottom', 'Temps')
+        self.ordinate =  self.plot.setLabel('left', "Température (°C)")
+        #self.ordinate.setXRange(0,35)
         self.window.show()
         
     def choice_data(self):
@@ -86,18 +86,24 @@ class LivePlot:
         if choice == "Température":
             data = self.temp
             name = "Température (°C)"
-            #self.plot.removeItem(axisItems)
-            #self.ordinate =  self.plot.setLabel('left', name)
+            self.plot.removeItem(self.ordinate)
+            self.ordinate =  self.plot.setLabel('left', name)
+            #self.ordinate.setRange(0,35)
+            self.plot.setYRange(0,35)
         elif choice == "Humidité":
             data = self.hum
             name = "Humidité (%)"
-            #self.plot.removeItem(axisItems)
-            #self.ordinate =  self.plot.setLabel('left', name)
+            self.plot.removeItem(self.ordinate)
+            self.ordinate =  self.plot.setLabel('left', name)
+            #elf.ordinate.setRange(0,35)
+            self.plot.setYRange(0,100)
         else:
             data = self.lum
             name = "Luminosité (%)"
-            #self.plot.removeItem(axisItems)
-            #self.ordinate =  self.plot.setLabel('left', name)
+            self.plot.removeItem(self.ordinate)
+            self.ordinate =  self.plot.setLabel('left', name)
+            #self.ordinate.setRange(0,35)
+            self.plot.setYRange(0,100)
         # Axe X
         #x = list(range(len(data)))
 
@@ -136,6 +142,52 @@ class LivePlot:
 
     def run(self):
         pg.exec()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
