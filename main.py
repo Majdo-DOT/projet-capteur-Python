@@ -16,16 +16,14 @@ plot = LivePlot()
 
 
 for line in read_serial(mode='sim'):
-    parts = line.split(' ')
-    print(parts)
-    print(len(parts))
-    
+    parts = [float(i) for i in line.split(' ')]
+
     if len(parts) != 3:
         print("Format incorrect :", line)
         continue
     try:
         timestamps = time.time()
-        temp, hum, lum = time.time(),2,3#map(float, parts[6:])
+        temp, hum, lum = parts[0],parts[1],parts[2]#map(float, parts[6:])
     except ValueError:
         print("Erreur conversion :", line)
         continue

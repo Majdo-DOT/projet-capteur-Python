@@ -42,9 +42,9 @@ class LivePlot:
 
         # Données
         self.timestamps = []
-        self.temp = []
-        self.hum = []
-        self.lum = []
+        self.temp = np.zeros(30)
+        self.hum = np.zeros(30)
+        self.lum = np.zeros(30)
 
         # Courbe
         self.curve = self.plot.plot(pen='y')
@@ -74,11 +74,11 @@ class LivePlot:
     
     def update(self, timestamps, temp, hum, lum):
         # Stockage
-        
-        self.timestamps.append(timestamps)
-        self.temp.append(temp)
-        self.hum.append(hum)
-        self.lum.append(lum)
+        self.timestamps = np.linspace(timestamps-30, timestamps,30)
+      
+        self.temp[-1]=temp
+        self.hum[-1]=hum
+        self.lum[-1]=lum
 
         choice = self.selector.currentText()
         
@@ -102,11 +102,14 @@ class LivePlot:
         #x = list(range(len(data)))
 
         # Update courbe
-        print(timestamps)
+        #print(self.timestamps)
         print(data)
-        self.curve.setData(data, data)
+        data[:-1] = data[1:]
+        print(data)
+        self.curve.setData(self.timestamps, data)
         self.plot.setTitle(name)
-
+        #self.curve.setPos(self.timestamps[0], 0)
+        
         # Stats
         # if len(data) > 0:
         #     arr = np.array(data)
