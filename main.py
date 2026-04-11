@@ -5,38 +5,57 @@ Created on Fri Mar 27 20:22:22 2026
 @author: Majdo
 """ 
 
-from serial_reader import read_serial
-from data_logger import save_data
-from realtime_plot import LivePlot
-from datetime import datetime
-from PyQt5 import QtWidgets, QtCore
-import time
+if __name__ == '__main__':
+    from realtime_plot import MainWindow,GraphWindow#,Worker
+    import sys
+    from PySide6.QtWidgets import QApplication
+    
+    if not QApplication.instance():
+        app = QApplication(sys.argv)
+    else:
+        app = QApplication.instance()
+        
+    widget = MainWindow(GraphWindow)
+    widget.show()
+    #worker = Worker()
+    #GraphWindow.make_connection(worker)
+    #worker.start()
+    sys.exit(app.exec())
 
-plot = LivePlot()
 
 
-for line in read_serial(mode='sim'):
-    parts = [float(i) for i in line.split(' ')]
 
-    if len(parts) != 3:
-        print("Format incorrect :", line)
-        continue
-    try:
-        timestamps = time.time()
-        temp, hum, lum = parts[0],parts[1],parts[2]#map(float, parts[6:])
-    except ValueError:
-        print("Erreur conversion :", line)
-        continue
-    print(timestamps, temp, hum, lum)
-   # try:
-   #     save_data('ello', timestamp, temp, hum, lum)
-    #except Exception as e:
-     #  print("Erreur sauvegarde :", e)
-    try:
-        plot.update(timestamps, temp, hum, lum)
-        QtWidgets.QApplication.processEvents()  # IMPORTANT
-    except Exception as e:
-        print("Erreur graphique :", e)        
+#from serial_reader import read_serial
+#from data_logger import save_data
+#from datetime import datetime
+#from PyQt5 import QtWidgets, QtCore
+#import time
+#import sys
+#plot = LivePlot()
+
+
+# for line in read_serial(mode='sim'):
+#     parts = [float(i) for i in line.split(' ')]
+
+#     if len(parts) != 3:
+#         print("Format incorrect :", line)
+#         continue
+#     try:
+#         timestamps = time.time()
+#         temp, hum, lum = parts[0],parts[1],parts[2]#map(float, parts[6:])
+#     except ValueError:
+#         print("Erreur conversion :", line)
+#         continue
+#     print(timestamps, temp, hum, lum)
+#    # try:
+#    #     save_data('ello', timestamp, temp, hum, lum)
+#     #except Exception as e:
+#      #  print("Erreur sauvegarde :", e)
+#     try:
+#         plot.update(timestamps, temp, hum, lum)
+#         QtWidgets.QApplication.processEvents()  # IMPORTANT
+#     except Exception as e:
+#         print("Erreur graphique :", e)        
 # for line in read_serial(mode="real"):
 #     print("RAW:", line)  # debug
     
@@ -71,7 +90,7 @@ for line in read_serial(mode='sim'):
 #         print("Erreur graphique :", e)
 
 #
-plot.run()
+#plot.run()
 
     # parts = line.split(',')
 
