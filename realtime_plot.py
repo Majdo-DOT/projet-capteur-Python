@@ -12,7 +12,7 @@ import time
 
 class MainWindow(pg.GraphicsLayoutWidget):
 
-    def __init__(self,GraphWindow):
+    def __init__(self,Graph):
         super().__init__(parent=None)
         self.setup_ui()
 
@@ -36,24 +36,33 @@ class MainWindow(pg.GraphicsLayoutWidget):
         self.mode = self.modes.currentText()
         self.modes.currentTextChanged.connect(self.mode_changed)
 
-        self.plotwidget = GraphWindow(self.choice, self.mode)
-        layout.addWidget(self.plotwidget)
+        self.graph = Graph(self.choice, self.mode)
+        layout.addWidget(self.graph)
 
         #Label stats
         self.stats_label = QLabel("Stats:")
         layout.addWidget(self.stats_label)
 
     def choice_changed(self,s):
-        self.plotwidget.update_choice(s)
+        self.graph.update_choice(s)
 
             
     def mode_changed(self,s):
 
-        self.plotwidget.update_mode(s)
+        self.graph.update_mode(s)
+        
     def closeEvent(self, event):
         QApplication.quit()
+        
+    def make_connection(self, data_object):
+        data_object.signal.connect(self.grab_data)
 
-class GraphWindow(pg.PlotWidget):
+    @Slot(object)
+    def grab_data(self, data):
+        print(data)
+        #self.plot.setData(data)
+        
+class Graph(pg.PlotWidget):
     
     def __init__(self, choice, mode):
         super().__init__(parent=None)
@@ -106,13 +115,7 @@ class GraphWindow(pg.PlotWidget):
         self.curve.setPos(self.timestamps[0], 0)
     
 
-    def make_connection(self, data_object):
-        data_object.signal.connect(self.grab_data)
 
-    @Slot(object)
-    def grab_data(self, data):
-        print(data)
-        self.plot.setData(data)
 
 
 class Worker(QThread):
@@ -129,7 +132,7 @@ class Worker(QThread):
             self.signal.emit(self.data)
             time.sleep(1)
             i += 1
-
+            
 
 if __name__ == '__main__':
 
@@ -140,11 +143,47 @@ if __name__ == '__main__':
     else:
         app = QApplication.instance()
         
-    widget = MainWindow(GraphWindow)
+    widget = MainWindow(Graph)
+    widget.show()
     worker = Worker()
-    MainWindow.plotwidget.make_connection(worker)
+    widget.make_connection(worker)
     worker.start()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
+
+# class Data():
+
+#     def __init__(self):
+#         self.timestamps=[]
+#         self.temp=[]
+#         self.hum=[]
+#         self.lum=[]
+#         self.temp_high=0
+#         self.hum_high=0
+#         self.lum_high=0
+#         self.temp_low=0
+#         self.hum_low=0
+#         self.lum_low=0
+#         self.temp_mean=0
+#         self.hum_mean=0
+#         self.lum_mean=0
+
+#     def process(self, data):
+#         self.timestamps.append(data[0])
+#         self.temp.append(data[1])
+#         self.hum.append(data[2])
+#         self.lum.append(data[3])
+#         data_logger(data)
+#         self.compute()
+
+#     def highest(self):
+
+#     def lowest(self):
+
+#     def compute(self):
+        
+#     def display(self):
+
+
 
 # class LivePlot:
 #     def __init__(self):

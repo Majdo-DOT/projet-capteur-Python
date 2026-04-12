@@ -6,7 +6,7 @@ Created on Fri Mar 27 20:22:22 2026
 """ 
 
 if __name__ == '__main__':
-    from realtime_plot import MainWindow,GraphWindow#,Worker
+    from realtime_plot import MainWindow,Graph,Worker
     import sys
     from PySide6.QtWidgets import QApplication
     
@@ -15,11 +15,11 @@ if __name__ == '__main__':
     else:
         app = QApplication.instance()
         
-    widget = MainWindow(GraphWindow)
+    widget = MainWindow(Graph)
     widget.show()
     #worker = Worker()
-    #GraphWindow.make_connection(worker)
-    #worker.start()
+    #widget.make_connection(worker)
+   # worker.start()
     sys.exit(app.exec())
 
 
